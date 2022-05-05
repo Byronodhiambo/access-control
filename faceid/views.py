@@ -68,12 +68,5 @@ def comparefaces():
         except:
             print("Face not detected try again")
 
-# comparefaces(request="")
-
-
-
-# captureimage(request="")    
-# 
-
-    
+  
 
