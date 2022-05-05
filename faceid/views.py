@@ -1,4 +1,6 @@
+from urllib import response
 from django.shortcuts import render
+from yaml import serialize
 from .models import Image
 from .serializer import Imageserializer
 from rest_framework.views import APIView
@@ -40,33 +42,34 @@ class users(APIView):
         Image.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-def captureimage():
-    camera = cv2.VideoCapture(0)
-    result, image = camera.read()
-    if result:
-        # cv2.imshow("your image", image)
-        cv2.imwrite("unknown.png", image)
-        # cv2.waitKey(0)
-        # cv2.destroyWindow("your image")
-        return 'unknown.png'
-    else:
-        print("No image detected. Please! try again")
+class ImageProcessing(APIView):
+    def captureimage(request):
+        camera = cv2.VideoCapture(0)
+        result, image = camera.read()
+        if result:
+            # cv2.imshow("your image", image)
+            cv2.imwrite("unknown.png", image)
+            # cv2.waitKey(0)
+            # cv2.destroyWindow("your image")
+            return 'unknown.png'
+        else:
+            print("No image detected. Please! try again")
 
 
-def comparefaces():
-    images = Image.objects.all()
-    for image in images:
-        known_image = face_recognition.load_image_file(image.photo)
-        unknown_image = face_recognition.load_image_file(captureimage())
-
+    def get(self, request, format=None):
         try:
-            biden_encoding = face_recognition.face_encodings(known_image)[0]
+            unknown_image = face_recognition.load_image_file(self.captureimage())
             unknown_encoding = face_recognition.face_encodings(unknown_image)[0]
-            results = face_recognition.compare_faces([biden_encoding], unknown_encoding)
-            print(results) 
+            images = Image.objects.all()
+            
+            for image in images:
+                known_image = face_recognition.load_image_file(image.photo)
+                known_encoding = face_recognition.face_encodings(known_image)[0]                
+                results = face_recognition.compare_faces([known_encoding], unknown_encoding)
+        except:   
+            results = False
+       
+        return Response({'result': results})
 
-        except:
-            print("Face not detected try again")
-
-  
+    
 
