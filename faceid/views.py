@@ -29,6 +29,8 @@ class users(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+        
+
     def put(self, request, pk, format=None):
         Image = self.get_object(pk)
         serializer = Imageserializer(Image, data=request.data)
@@ -70,6 +72,18 @@ class ImageProcessing(APIView):
             results = False
        
         return Response({'result': results})
+
+class EnrolUser(APIView):
+
+    def post(self, request, format=None):
+        file = request.data['file']
+        image = Image.objects.create(image=file)
+        
+        serializer = Imageserializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     
 
