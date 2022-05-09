@@ -52,7 +52,7 @@ class Base64ImageField(serializers.ImageField):
 
     
 class Imageserializer(serializers.ModelSerializer):
-    image = Base64ImageField(
+    photo = Base64ImageField(
         max_length=None, use_url=True,
     )
     class Meta:
