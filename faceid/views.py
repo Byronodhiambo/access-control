@@ -8,7 +8,11 @@ from rest_framework import status
 from rest_framework.response import Response
 import face_recognition
 import cv2
+from django.http import JsonResponse
 # Create your views here.
+
+def home(request, *args, **kwargs):
+    return JsonResponse({'home': 'this is the homepage'})
 
 
 class users(APIView):
